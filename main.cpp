@@ -17,8 +17,9 @@ int main()
 
     for (auto a:v)
         for (auto b:v)
-            if (a+b==2020)
-                cout << a*b << endl;
+            for (auto c:v)
+                if (a+b+c==2020)
+                    cout << a*b*c << endl;
 
     return EXIT_SUCCESS;
 }
