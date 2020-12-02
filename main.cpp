@@ -19,7 +19,7 @@ int main()
         for (int i=0;i!=strlen(passwd);i++)
             if (passwd[i]==c)
                 count++;
-        if (count>=a && count<=b)
+        if ((passwd[a-1]==c) + (passwd[b-1]==c)==1)
             total++;
     }
 
