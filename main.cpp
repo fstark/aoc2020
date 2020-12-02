@@ -6,20 +6,24 @@ using namespace std;
 
 int main()
 {
-    vector<int> v;
+    int a;
+    int b;
+    char c;
+    char passwd[1024];
 
-    while (!cin.eof())
+    int total = 0;
+
+    while (scanf("%d-%d %c: %s\n", &a, &b, &c, passwd)==4)
     {
-        int val;
-        cin >> val;
-        v.push_back(val);
+        int count = 0;
+        for (int i=0;i!=strlen(passwd);i++)
+            if (passwd[i]==c)
+                count++;
+        if (count>=a && count<=b)
+            total++;
     }
 
-    for (auto a:v)
-        for (auto b:v)
-            for (auto c:v)
-                if (a+b+c==2020)
-                    cout << a*b*c << endl;
+    printf( "%d\n", total );
 
     return EXIT_SUCCESS;
 }
