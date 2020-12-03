@@ -1,27 +1,31 @@
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
+#include <string>
 
 using namespace std;
 
 int main()
 {
-    int a;
-    int b;
-    char c;
-    char passwd[1024];
+    const int W = 31;
+    const int H = 323;
+
+    char data[W][H];
+
+    for (int y=0;y!=H;y++)
+        for (int x=0;x!=W;x++)
+        {
+            int c;
+            do
+            {
+                c = getchar();
+                data[x][y] = c;
+            }   while (c!='.' && c!='#');
+        }
 
     int total = 0;
-
-    while (scanf("%d-%d %c: %s\n", &a, &b, &c, passwd)==4)
-    {
-        int count = 0;
-        for (int i=0;i!=strlen(passwd);i++)
-            if (passwd[i]==c)
-                count++;
-        if ((passwd[a-1]==c) + (passwd[b-1]==c)==1)
-            total++;
-    }
+    for (int i=0;i!=H;i++)
+        total += data[(3*i)%W][i]=='#';
 
     printf( "%d\n", total );
 
