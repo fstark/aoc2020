@@ -10,11 +10,12 @@ int main()
 {
     std::string s;
 
-    bool seen[26];
+    int seen[26];
     for (int i=0;i!=26;i++)
-        seen[i] = false;
+        seen[i] = 0;
 
     int total = 0;
+    int count = 0;
 
     while (std::getline(std::cin,s))
     {
@@ -22,18 +23,20 @@ int main()
         if (s=="")
         {
             for (auto b:seen)
-                total+=b;
+                total+=b==count;
             for (int i=0;i!=26;i++)
-                seen[i] = false;
+                seen[i] = 0;
+            count = 0;
         }
         else
         {
             for (auto c:s)
-                seen[c-'a'] = true;
+                seen[c-'a']++;
+            count++;
         }
     }
     for (auto b:seen)
-        total+=b;
+        total+=b==count;
 
     std::cout << total << "\n";
 
