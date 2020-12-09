@@ -10,30 +10,26 @@ using namespace std::string_literals;
 
 int main()
 {
-    const int S = 25;
+    const int N = 15690279;
 
     std::vector<long long> data;
 
-    data.push_back( 0 );
-
-    for (int i=0;i!=S;i++)
+    while (1)
     {
         long long n;
         std::cin >> n;
         data.push_back( n );
+        long long total = 0;
+        for (int i=data.size()-1;i>=0;i--)
+        {
+            total += data[i];
+            if (total==N)
+            {
+                std::cout << *std::min_element( std::begin(data)+i, std::end(data) ) + *std::max_element( std::begin(data)+i, std::end(data) ) << "\n";
+                return 0;
+            }
+        }
     }
-
-    loop:
-    data.erase(std::begin(data));
-    long long n;
-    std::cin >> n;
-    data.push_back( n );
-    for (int i=0;i!=S;i++)
-        for (int j=0;j!=S;j++)
-            if (i!=j && data[i]+data[j]==n)
-                goto loop;
-
-    std::cout << n << "\n";
 
     return EXIT_SUCCESS;
 }
