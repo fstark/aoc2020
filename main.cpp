@@ -1,82 +1,39 @@
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
+#include <array>
 #include <string>
 #include <map>
 #include <set>
 #include <cassert>
 using namespace std::string_literals;
 
-struct instr
-{
-    std::string code;
-    int value;
-};
-
-int exec( std::vector<instr> prog, int i )
-{
-    if (prog[i].code=="nop")
-        prog[i].code = "jmp";
-    else
-        if (prog[i].code=="jmp")
-            prog[i].code = "nop";
-
-    int pc = 0;
-    int a = 0;
-    int count = 0;
-    while (count++ <= prog.size())
-    {
-        // std::cout << pc << "," << a << ":" << prog[pc].code << " " << prog[pc].value << "\n";
-        auto i = prog[pc].code;
-        if (i=="acc")
-        {
-            a = a + prog[pc].value;
-            pc++;
-        }
-        else if (i=="nop")
-        {
-            pc++;
-        }
-        else if (i=="jmp")
-        {
-            pc += prog[pc].value;
-        }
-
-        if (pc<0 || pc>=prog.size())
-            return a;
-    }
-
-    // std::cout << "\n";
-
-    return 0; // ?ugh
-}
-
 int main()
 {
-    std::vector<instr> prog;
+    const int S = 25;
 
-    while (!std::cin.eof())
+    std::vector<long long> data;
+
+    data.push_back( 0 );
+
+    for (int i=0;i!=S;i++)
     {
-        std::string instr;
-        int value;
-
-        std::cin >> instr;
-        if (std::cin.eof())
-            break;
-        std::cin >> value;
-
-        prog.push_back( { instr, value } );
+        long long n;
+        std::cin >> n;
+        data.push_back( n );
     }
 
-    int a;
-    for (int i=0;i!=prog.size();i++)
-    {
-        // std::cout << i << "\n";
-        a = exec( prog, i );
-        if (a)
-            break;
-    }
-    std::cout << a << "\n";
+    loop:
+    data.erase(std::begin(data));
+    long long n;
+    std::cin >> n;
+    data.push_back( n );
+    for (int i=0;i!=S;i++)
+        for (int j=0;j!=S;j++)
+            if (i!=j && data[i]+data[j]==n)
+                goto loop;
+
+    std::cout << n << "\n";
 
     return EXIT_SUCCESS;
 }
