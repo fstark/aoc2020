@@ -8,6 +8,8 @@
 #include <cassert>
 using namespace std::string_literals;
 
+//  I am deeply ashamed of this code
+
 const int W = 95;
 const int H = 99;
 // const int W = 10;
@@ -23,10 +25,23 @@ int count_seats( int x0, int y0 )
         for (int dy=-1;dy!=2;dy++)
             if (dx!=0 || dy!=0)
             {
-                int x = x0+dx;
-                int y = y0+dy;
-                if (x>=0 && x<W && y>=0 && y<H)
-                    count += room[y][x]==1;
+                bool found = false;
+                for (int d=1;d!=W+H;d++)
+                {
+                    int x = x0+dx*d;
+                    int y = y0+dy*d;
+                    if (x>=0 && x<W && y>=0 && y<H)
+                        if (room[y][x]==0)
+                        {
+                            break;
+                        }
+                        else if (room[y][x]==1)
+                        {
+                            found = true;
+                            break;
+                        }
+                }
+                count += found;
             }
     return count;
 }
@@ -50,13 +65,13 @@ int main()
             }
         }
 
-    for (int y=0;y!=H;y++)
-    {
-        for (int x=0;x!=W;x++)
-            std::cout << (room[y][x]==1?'#':(room[y][x]==-1?'.':'L'));
-        std::cout << "\n";
-    }
-    std::cout << "\n";
+    // for (int y=0;y!=H;y++)
+    // {
+    //     for (int x=0;x!=W;x++)
+    //         std::cout << (room[y][x]==1?'#':(room[y][x]==-1?'.':'L'));
+    //     std::cout << "\n";
+    // }
+    // std::cout << "\n";
 
 
     while (true)
@@ -69,19 +84,19 @@ int main()
                 if (room[y][x]==0)
                     room2[y][x] = count==0?1:0;
                 if (room[y][x]==1)
-                    room2[y][x] = count>=4?0:1;
+                    room2[y][x] = count>=5?0:1;
             }
         if (room==room2)
             break;
         room = room2;
 
-        for (int y=0;y!=H;y++)
-        {
-            for (int x=0;x!=W;x++)
-                std::cout << (room[y][x]==1?'#':(room[y][x]==-1?'.':'L'));
-            std::cout << "\n";
-        }
-        std::cout << "\n";
+        // for (int y=0;y!=H;y++)
+        // {
+        //     for (int x=0;x!=W;x++)
+        //         std::cout << (room[y][x]==1?'#':(room[y][x]==-1?'.':'L'));
+        //     std::cout << "\n";
+        // }
+        // std::cout << "\n";
 
 
     }
