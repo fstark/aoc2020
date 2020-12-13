@@ -1,27 +1,35 @@
 #include <stdlib.h>
 #include <iostream>
 #include <complex>
-
-using namespace std::complex_literals;
+#include <limits>
 
 int main()
 {
-    static const char *direction_names = "ENWS";
-    std::complex<double> p;
-    std::complex<double> w = 10.+1i;
+    int time;
+    std::cin >> time;
+
+    time--;
+
+    int min_time = std::numeric_limits<int>::max();
+    int min_n;
+
     for (;;)
     {
-        char c;
-        double n;
-        std::cin >> c >> n;
+        int n;
+        std::cin >> n;
         if (std::cin.eof())
             break;
-        if (c=='F') p += w*n;
-        else if (c=='R' || c=='L') w *= std::pow( ((c=='L')-(c=='R'))*1.*1i, n/90 );
-        else w += std::pow( 1i, (::strchr( direction_names, c )-direction_names) )*n;
+        if (n==0)
+            continue;
+        int t = time+(n-(time%n));
+        if (t<min_time)
+        {
+            min_time = t;
+            min_n = n;
+        }
     }
 
-    std::cout << ::fabs( std::real(p) ) + ::fabs( std::imag(p) ) << std::endl;
+    std::cout << (min_time-time-1)*min_n << std::endl;
 
     return EXIT_SUCCESS;
 }
