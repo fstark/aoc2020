@@ -2,34 +2,61 @@
 #include <iostream>
 #include <complex>
 #include <limits>
+#include <map>
 
 int main()
 {
-    int time;
-    std::cin >> time;
+    long mask = 0;
+    long mask_val = 0;
 
-    time--;
-
-    int min_time = std::numeric_limits<int>::max();
-    int min_n;
+    std::map<long,long> mem;
 
     for (;;)
     {
-        int n;
-        std::cin >> n;
+        std::string token;
+        std::cin >> token;
         if (std::cin.eof())
             break;
-        if (n==0)
-            continue;
-        int t = time+(n-(time%n));
-        if (t<min_time)
+        if (token=="mask")
         {
-            min_time = t;
-            min_n = n;
+            mask = 0;
+            mask_val = 0;
+            std::cin >> token;  //  =
+            std::cin >> token;
+            for (auto c:token)
+            {
+                // std::cout << mask << " ";
+                // std::cout << c;
+                mask <<= 1;
+                mask_val <<= 1;
+                if (c=='X')
+                    mask |= 1;
+                // if (c=='0')
+                if (c=='1')
+                    mask_val |= 1;                
+            }
+        }
+        else if (token=="mem")
+        {
+            char c;
+            long adrs;
+            long value;
+            std::cin >> c;
+            std::cin >> adrs;
+            std::cin >> c;
+            std::cin >> token;  //  =
+            std::cin >> value;
+            // printf( "mem[%ld] = %ld [%0lx %0lx]\n", adrs, value, mask, mask_val );
+            // std::cout << adrs << " = " << value << " MASK " << mask << " MVAL=" << mask_val << "\n";
+            mem[adrs] = (value & mask) + mask_val;
         }
     }
 
-    std::cout << (min_time-time-1)*min_n << std::endl;
+    long total = 0;
+    for (auto [k,v] : mem)
+        total += v;
+
+    std::cout << total << std::endl;
 
     return EXIT_SUCCESS;
 }
