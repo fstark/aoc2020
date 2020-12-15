@@ -1,88 +1,35 @@
 #include <stdlib.h>
 #include <iostream>
-#include <complex>
-#include <limits>
-#include <map>
+#include <array>
 
 int main()
 {
-    long mask = 0;
-    long mask_val = 0;
-    long keep = 0;
+    // std::array<int,2020> spoken = { 0,3,6 };
+    std::array<int,2020> spoken = { 1,12,0,20,8,16 };
 
-    std::map<long,long> mem;
 
-    for (;;)
+    int delta = 0;
+
+    for (int i=6;i!=2020;i++)
     {
-        std::string token;
-        std::cin >> token;
-        if (std::cin.eof())
-            break;
-        if (token=="mask")
-        {
-            mask = 0;
-            mask_val = 0;
-            keep = 0;
-            std::cin >> token;  //  =
-            std::cin >> token;
-            for (auto c:token)
-            {
-                // std::cout << mask << " ";
-                // std::cout << c;
-                mask <<= 1;
-                mask_val <<= 1;
-                keep <<= 1;
-                if (c=='X')
-                    mask |= 1;
-                if (c=='0')
-                    keep |= 1;
-                if (c=='1')
-                    mask_val |= 1;                
+        delta = 0;
+        int last = spoken[i-1];
+        for (int j=i-2;j>=0;j--)
+            if (spoken[j]==last)
+            {   delta = i-j-1;
+                break;
             }
-        }
-        else if (token=="mem")
-        {
-            char c;
-            long adrs;
-            long value;
-            std::cin >> c;
-            std::cin >> adrs;
-            std::cin >> c;
-            std::cin >> token;  //  =
-            std::cin >> value;
-            // printf( "mem[%ld] = %ld [%0lx %0lx]\n", adrs, value, mask, mask_val );
-            // std::cout << adrs << " = " << value << " MASK " << mask << " MVAL=" << mask_val << "\n";
-            // mem[adrs] = (value & mask) + mask_val;
-            // std::cout << "KEEP=" << keep << "\n";
-            // std::cout << "MVAL=" << mask_val << "\n";
-            // std::cout << "ADRS=" << adrs << "\n";
-            adrs = (adrs & keep) | mask_val;
-            // std::cout << "ADRS=" << adrs << "\n";
-            for (int i=0;i!=512;i++)
-            {
-                long real_adrs = adrs;
-                long p = 0;
-                long ii = i;
-                for (int j=0;j!=36;j++)
-                    if (mask&(1L<<j))
-                    {
-                        real_adrs &= ~(1L<<j);
-                        if (ii&1)
-                            real_adrs |= (1L<<j);
-                        ii>>=1;
-                        p++;
-                    }
-                mem[real_adrs] = value;
-                // printf( "mem[%lx] = %ld\n", real_adrs, value );
-            }
-        }
+
+        // std::cout << "[";
+        // for (int n=0;n!=i;n++)
+        //     std::cout << spoken[n] << " ";
+        // std::cout << "] ";
+
+        // std::cout << i << " v=" << last << " delta=" << delta << "\n";
+        spoken[i] = delta;
     }
 
-    long total = 0;
-    for (auto [k,v] : mem)
-        total += v;
-
-    std::cout << total << std::endl;
+    std::cout << delta << std::endl;
 
     return EXIT_SUCCESS;
 }
