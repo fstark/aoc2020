@@ -8,6 +8,7 @@ int main()
 {
     long mask = 0;
     long mask_val = 0;
+    long keep = 0;
 
     std::map<long,long> mem;
 
@@ -21,6 +22,7 @@ int main()
         {
             mask = 0;
             mask_val = 0;
+            keep = 0;
             std::cin >> token;  //  =
             std::cin >> token;
             for (auto c:token)
@@ -29,9 +31,11 @@ int main()
                 // std::cout << c;
                 mask <<= 1;
                 mask_val <<= 1;
+                keep <<= 1;
                 if (c=='X')
                     mask |= 1;
-                // if (c=='0')
+                if (c=='0')
+                    keep |= 1;
                 if (c=='1')
                     mask_val |= 1;                
             }
@@ -48,7 +52,29 @@ int main()
             std::cin >> value;
             // printf( "mem[%ld] = %ld [%0lx %0lx]\n", adrs, value, mask, mask_val );
             // std::cout << adrs << " = " << value << " MASK " << mask << " MVAL=" << mask_val << "\n";
-            mem[adrs] = (value & mask) + mask_val;
+            // mem[adrs] = (value & mask) + mask_val;
+            // std::cout << "KEEP=" << keep << "\n";
+            // std::cout << "MVAL=" << mask_val << "\n";
+            // std::cout << "ADRS=" << adrs << "\n";
+            adrs = (adrs & keep) | mask_val;
+            // std::cout << "ADRS=" << adrs << "\n";
+            for (int i=0;i!=512;i++)
+            {
+                long real_adrs = adrs;
+                long p = 0;
+                long ii = i;
+                for (int j=0;j!=36;j++)
+                    if (mask&(1L<<j))
+                    {
+                        real_adrs &= ~(1L<<j);
+                        if (ii&1)
+                            real_adrs |= (1L<<j);
+                        ii>>=1;
+                        p++;
+                    }
+                mem[real_adrs] = value;
+                // printf( "mem[%lx] = %ld\n", real_adrs, value );
+            }
         }
     }
 
