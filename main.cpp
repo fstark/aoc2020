@@ -1,54 +1,94 @@
 #include <stdlib.h>
 #include <iostream>
-#include <array>
+#include <vector>
+#include <string>
+
+struct interval
+{
+    int from;
+    int to;
+
+    bool check( int n ) { return n>=from && n<=to; }
+};
 
 int main()
 {
-    // const int LEN = 30000000;
-    const int LEN = 30000000;
-    const int INPUT = 6;
+    std::string attribute;
+    std::string token;
 
-    static std::array<int,INPUT> data = { 1,12,0,20,8,16 };
-    static std::array<int,LEN> last_used_index;
+    std::vector<std::pair<interval,interval>> valids;
 
-    // static std::array<int,LEN> expected = { 0, 3, 6, 0, 3, 3, 1, 0, 4, 0};
-
-
-    last_used_index.fill( -1 );
-
-    for (int i=0;i!=INPUT-1;i++)
+    for (;;)
     {
-        last_used_index[data[i]] = i;
-    }
-    int last = data[INPUT-1];
-    int index = INPUT;
+        std::cin >> attribute;
 
-    while (index<LEN)
-    {
-        // for (int i=0;i!=10;i++)
-        //     std::cout << i << "/" << last_used_index[i] << " ";
-        // std::cout << "\n";
+        if (attribute=="your")
+            break;
 
-        //  Where did we last saw last?
-        int previous = last_used_index[last];
-        // std::cout << index << ": last=" << last << " used at=" << previous;
+        int from;
+        char c;
+        int to;
 
-        last_used_index[last] = index-1;
-        index++;
-        if (previous==-1)
-        {
-            //  Never, so we now have last == 0
-            last = 0;
-        }
-        else
-        {
-            last = index-previous-2;
-        }
+        std::pair<interval,interval> data;
 
-        // std::cout << " => " << last << "/" << expected[index-1] << "\n";
+        std::cin >> data.first.from;
+        std::cin >> c;
+        std::cin >> data.first.to;
+
+        std::cin >> token;
+
+        std::cin >> data.second.from;
+        std::cin >> c;
+        std::cin >> data.second.to;
+
+        valids.push_back( data );
     }
 
-    std::cout << last << "\n";
+    do
+    {
+        std::cin >> token;
+        // std::cout << token << "|";
+    }   while (token!="tickets:");
+
+    int err = 0;
+
+    for (;;)
+    {
+        std::vector<int> ticket;
+
+        int n;
+        for (;;)
+        {
+            char c;
+            std::cin >> n;
+            if (std::cin.eof())
+                break;
+            if (n==-1)
+                break;
+            std::cin >> c;
+            ticket.push_back( n );
+        }
+        if (std::cin.eof())
+            break;
+
+        for (auto &v:ticket)
+        {
+            bool good = false;
+            for (auto &range:valids)
+            {
+                if (range.first.check(v) || range.second.check(v))
+                {
+                    good = true;
+                    break;
+                }
+            }
+            
+            if (!good)
+                err += v;
+        }
+    }
+
+    std::cout << err << "\n";
 
     return EXIT_SUCCESS;
 }
