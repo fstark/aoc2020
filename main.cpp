@@ -4,32 +4,51 @@
 
 int main()
 {
-    // std::array<int,2020> spoken = { 0,3,6 };
-    std::array<int,2020> spoken = { 1,12,0,20,8,16 };
+    // const int LEN = 30000000;
+    const int LEN = 30000000;
+    const int INPUT = 6;
+
+    static std::array<int,INPUT> data = { 1,12,0,20,8,16 };
+    static std::array<int,LEN> last_used_index;
+
+    // static std::array<int,LEN> expected = { 0, 3, 6, 0, 3, 3, 1, 0, 4, 0};
 
 
-    int delta = 0;
+    last_used_index.fill( -1 );
 
-    for (int i=6;i!=2020;i++)
+    for (int i=0;i!=INPUT-1;i++)
     {
-        delta = 0;
-        int last = spoken[i-1];
-        for (int j=i-2;j>=0;j--)
-            if (spoken[j]==last)
-            {   delta = i-j-1;
-                break;
-            }
+        last_used_index[data[i]] = i;
+    }
+    int last = data[INPUT-1];
+    int index = INPUT;
 
-        // std::cout << "[";
-        // for (int n=0;n!=i;n++)
-        //     std::cout << spoken[n] << " ";
-        // std::cout << "] ";
+    while (index<LEN)
+    {
+        // for (int i=0;i!=10;i++)
+        //     std::cout << i << "/" << last_used_index[i] << " ";
+        // std::cout << "\n";
 
-        // std::cout << i << " v=" << last << " delta=" << delta << "\n";
-        spoken[i] = delta;
+        //  Where did we last saw last?
+        int previous = last_used_index[last];
+        // std::cout << index << ": last=" << last << " used at=" << previous;
+
+        last_used_index[last] = index-1;
+        index++;
+        if (previous==-1)
+        {
+            //  Never, so we now have last == 0
+            last = 0;
+        }
+        else
+        {
+            last = index-previous-2;
+        }
+
+        // std::cout << " => " << last << "/" << expected[index-1] << "\n";
     }
 
-    std::cout << delta << std::endl;
+    std::cout << last << "\n";
 
     return EXIT_SUCCESS;
 }
