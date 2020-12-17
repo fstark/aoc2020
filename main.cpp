@@ -4,167 +4,76 @@
 #include <string>
 #include <array>
 
-struct interval
-{
-    int from;
-    int to;
-
-    bool check( int n ) { return n>=from && n<=to; }
-};
-
 int main()
 {
-    const int FIELDS = 20;
+    const int SIZE = 101;
+    const int MIN = -SIZE/2;
+    const int MAX = (SIZE+1)/2;
+    const int ISIZE = 8;
+    const int IMIN = -ISIZE/2;
+    const int IMAC = (ISIZE+1)/2;
 
-    std::array<std::array<bool,FIELDS>,FIELDS> matches;
+    const int MID = SIZE/2;
 
-    for (int f=0;f!=FIELDS;f++)
-        for (int p=0;p!=FIELDS;p++)
-            matches[f][p] = true;
+    static std::array<std::array<std::array<bool,SIZE>,SIZE>,SIZE> cells;
 
-    std::string attribute;
-    std::string token;
+    char c;
 
-    std::vector<std::pair<interval,interval>> valids;
-
-    for (;;)
-    {
-        std::cin >> attribute;
-
-        if (attribute=="your")
-            break;
-
-        int from;
-        char c;
-        int to;
-
-        std::pair<interval,interval> data;
-
-        std::cin >> data.first.from;
-        std::cin >> c;
-        std::cin >> data.first.to;
-
-        std::cin >> token;
-
-        std::cin >> data.second.from;
-        std::cin >> c;
-        std::cin >> data.second.to;
-
-        valids.push_back( data );
-    }
-
-    do
-    {
-        std::cin >> token;
-        // std::cout << token << "|";
-    }   while (token!="tickets:");
-
-    int err = 0;
-
-    for (;;)
-    {
-        std::vector<int> ticket;
-
-        int n;
-        for (;;)
+    for (int x=0;x!=ISIZE;x++)
+        for (int y=0;y!=ISIZE;y++)
         {
-            char c;
-            std::cin >> n;
-            if (std::cin.eof())
-                break;
-            if (n==-1)
-                break;
             std::cin >> c;
-            ticket.push_back( n );
+            cells[y+MID+IMIN][x+MID+IMIN][MID] = c=='#';
+            // std::cout << x+MID+IMIN << " " << y+MID+IMIN << " " << MID << " = " << cells[x+MID+IMIN][y+MID+IMIN][MID] << "\n";
         }
-        if (std::cin.eof())
-            break;
 
-        bool keep = true;
-        for (auto &v:ticket)
-        {
-            bool good = false;
-            for (auto &range:valids)
-            {
-                if (range.first.check(v) || range.second.check(v))
-                {
-                    good = true;
-                    break;
-                }
-            }
-            if (!good)
-                keep = false;
-        }
-        if (keep)
-        {
-            for (int tf=0;tf!=FIELDS;tf++)          //  ticket fields
-            {
-                int v = ticket[tf];
-                for (int pf=0;pf!=FIELDS;pf++)      //  potential fields
-                    if (!valids[pf].first.check(v) && !valids[pf].second.check(v))
-                    {
-                        matches[tf][pf] = false;
-                        // std::cout << "TICKET ATT #" << tf << " CANNOT MATCH FIELD #" << pf << " (VALUE " << v << ")\n";
-                    }
-            }
-        }
-    }
-
-    auto ref = matches;
-    for (;;)
+//    for (;;)
+    for (int k=0;k!=6;k++)
     {
-        for (int x=0;x!=FIELDS;x++)
-        {
-            int count = 0;
-            int pos = 0;
-            for (int y=0;y!=FIELDS;y++)
-            {
-                if (matches[x][y])
-                {
-                    count++;
-                    pos = y;
-                }
-            }
-            if (count==1)
-            {
-                std::cout << " X= " << x << " Y= " << pos << "\n";
-                for (int y=0;y!=FIELDS;y++)
-                {
-                    matches[y][pos] = false;
-                }
-                matches[x][pos] = true;
+        auto next = cells;
 
-                for (int f=0;f!=FIELDS;f++)
+        // std::cout << "------------\n";
+        // for (int z=0;z!=SIZE;z++)
+        // {
+        //     std::cout << "z = " << z+MIN << "\n";
+        //     for (int y=0;y!=SIZE;y++)
+        //     {
+        //         for (int x=0;x!=SIZE;x++)
+        //             std::cout << (cells[x][y][z]?'#':'.');
+        //         std::cout << "\n";
+        //     }
+        // }        
+
+        for (int x=1;x!=SIZE-1;x++)
+            for (int y=1;y!=SIZE-1;y++)
+                for (int z=1;z!=SIZE-1;z++)
                 {
-                    for (int p=0;p!=FIELDS;p++)
-                        std::cout << matches[f][p] << " ";
-                    std::cout << "\n";
+                    int count = 0;
+                    for (int dx=-1;dx!=2;dx++)
+                        for (int dy=-1;dy!=2;dy++)
+                            for (int dz=-1;dz!=2;dz++)
+                                if (dx || dy || dz)
+                                    count += cells[x+dx][y+dy][z+dz];
+                    // std::cout << "@"<<x<<y<<z<<":"<<count<<" ";
+                    if (cells[x][y][z])
+                        next[x][y][z] = count==2 || count==3;
+                    else
+                        next[x][y][z] = count==3;
                 }
-                std::cout << "\n";
-                std::cout << "\n";
 
-            }
-        }
-
-        if (ref==matches)
+        if (next==cells)
             break;
-        ref = matches;
+        cells = next;
     }
 
-    std::vector my_ticket = { 139,67,71,59,149,89,101,83,107,103,79,157,151,113,61,109,73,97,137,53 };
+    int count = 0;
 
-    long prod = 1;
-    for (int f=0;f!=6;f++)
-    {
-        for (int p=0;p!=FIELDS;p++)
-            if (matches[p][f])
-            {
-                prod *= my_ticket[p];
-                std::cout << p << " " << my_ticket[p] << "\n";
-            }
-    }
+    for (int x=0;x!=SIZE;x++)
+        for (int y=0;y!=SIZE;y++)
+            for (int z=0;z!=SIZE;z++)
+                count += cells[x][y][z];
 
-    std::cout << prod << "\n";
+    std::cout << count << "\n";
 
     return EXIT_SUCCESS;
 }

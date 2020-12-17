@@ -1,5 +1,5 @@
 test: go
-	cat input.txt | sed -e 's/\(,[0-9]*\)$$/\1,-1/g' | ./go
+	cat input.txt | ./go
 
 go: main.cpp
 	g++ -O3 -std=c++17 main.cpp -lc++ -o go
